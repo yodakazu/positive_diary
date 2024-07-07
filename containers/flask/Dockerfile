@@ -14,5 +14,10 @@ COPY app/ app/
 # 依存関係をインストール
 RUN pip install -r requirements.txt
 
+# マイグレーションを実行
+RUN flask db init  
+RUN flask db migrate -m "Initial migration"
+RUN flask db upgrade
+
 # アプリケーションを実行
 CMD ["python", "run.py"]
