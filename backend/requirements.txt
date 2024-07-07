@@ -3,3 +3,4 @@ Werkzeug
 datetime
 flask_sqlalchemy
 Flask-Migrate
+psycopg2
