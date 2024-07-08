@@ -6,7 +6,6 @@ WORKDIR /app
 
 # 必要なファイルをコピー
 COPY requirements.txt requirements.txt
-COPY .env .env
 COPY config.py config.py
 COPY run.py run.py
 COPY app/ app/
@@ -15,4 +14,4 @@ COPY app/ app/
 RUN pip install -r requirements.txt
 
 # アプリケーションを実行
-CMD ["python", "run.py"]
+CMD ["bash", "run.sh"]
