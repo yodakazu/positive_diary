@@ -1,6 +1,6 @@
 Flask
 Werkzeug
 datetime
-flask_sqlalchemy
+Flask-SQLAlchemy
 Flask-Migrate
 psycopg2
