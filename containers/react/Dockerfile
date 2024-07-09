@@ -12,6 +12,9 @@ RUN npm install
 COPY public/ ./public
 COPY src/ ./src
 
+# ルーティング他の目のライブラリ
+RUN npm install react-router-dom
+
 # アプリケーションのビルド
 RUN npm run build
 
