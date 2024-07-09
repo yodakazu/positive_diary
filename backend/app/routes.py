@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from .models import db, User
+from .models import db, User, Diary
 
 test_bp = Blueprint('test', __name__)
 
@@ -41,7 +41,7 @@ def get_user_by_id(user_id):
     if not user:
         return jsonify({'message': 'User not found'}), 404
     user_data = {
-        'id': user.id,
+        'user_id': user.user_id,
         'username': user.username,
         'email': user.email
     }
@@ -71,3 +71,53 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'message': 'User deleted successfully'}), 200
+
+diaries_bp = Blueprint('diaries', __name__, url_prefix='/diaries')
+
+# 日記登録
+@diaries_bp.route('/add', methods=['POST'])
+def add_diary():
+    data = request.json
+    new_diary = Diary(
+        user_id=data['user_id'],
+        content=data['content'],
+        date=data['date'],
+    )
+    db.session.add(new_diary)
+    db.session.commit()
+    return jsonify({'message': 'Diary created successfully'}), 201
+
+# 日記情報取得
+@diaries_bp.route('/<int:diary_id>', methods=['GET'])
+def get_diary_by_id(diary_id):
+    diary = Diary.query.get(diary_id)
+    if not diary:
+        return jsonify({'message': 'Diary not found'}), 404
+    diary_data = {
+        'diary_id': diary.diary_id,
+        'content': diary.content,
+        'date': diary.date
+    }
+    return jsonify(diary_data), 200
+
+# 日記更新
+@diaries_bp.route('/update/<int:diary_id>', methods=['POST'])
+def update_diary(diary_id):
+    diary = Diary.query.get(diary_id)
+    if not diary:
+        return jsonify({'message': 'Diary not found'}), 404
+    data = request.json
+    diary.content = data.get('content', diary.content)
+    diary.date = data.get('date', diary.date)
+    db.session.commit()
+    return jsonify({'message': 'Diary updated successfully'}), 200
+
+# 日記削除
+@diaries_bp.route('/delete/<int:diary_id>', methods=['GET'])
+def delete_diary(diary_id):
+    diary = Diary.query.get(diary_id)
+    if not diary:
+        return jsonify({'message': 'Diary not found'}), 404
+    db.session.delete(diary)
+    db.session.commit()
+    return jsonify({'message': 'Diary deleted successfully'}), 200

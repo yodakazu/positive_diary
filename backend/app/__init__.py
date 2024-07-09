@@ -18,9 +18,10 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    from .routes import test_bp, users_bp
+    from .routes import test_bp, users_bp, diaries_bp
     app.register_blueprint(test_bp)
     app.register_blueprint(users_bp)
+    app.register_blueprint(diaries_bp)
 
 
     return app
