@@ -13,8 +13,20 @@ services:
       - .env
     depends_on:
       - db 
+  
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../containers/react/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
   db:
+    build:
+        context: .
+        dockerfile: ./containers/postgres/Dockerfile
     image: postgres:latest
     restart: always
     env_file:
