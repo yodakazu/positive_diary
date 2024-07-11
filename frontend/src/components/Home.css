@@ -1,0 +1,14 @@
+.container {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .heading {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .paragraph {
+    font-size: 1.2em;
+    color: #555;
+  }
