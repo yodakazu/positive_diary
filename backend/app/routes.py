@@ -55,7 +55,6 @@ def login():
     return jsonify({'message': 'Login successful'}), 200
 
 @users_bp.route('/logout', methods=['GET'])
-@login_required
 def logout():
     logout_user()
     return jsonify({'message': 'Logout successful'}), 200

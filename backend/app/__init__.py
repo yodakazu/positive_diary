@@ -21,7 +21,7 @@ def create_app():
     login_manager.init_app(app)
     migrate = Migrate(app, db)
 
-    login_manager.login_view = 'users.signin_user'
+    # login_manager.login_view = 'users.signin_user'
     login_manager.login_message = "Please log in to access this page."
 
     with app.app_context():
