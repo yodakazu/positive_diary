@@ -4,3 +4,4 @@ datetime
 Flask-SQLAlchemy
 Flask-Migrate
 psycopg2
+Flask-cors

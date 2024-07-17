@@ -79,9 +79,10 @@ diaries_bp = Blueprint('diaries', __name__, url_prefix='/diaries')
 def add_diary():
     data = request.json
     new_diary = Diary(
-        user_id=data['user_id'],
+        # user_id=data['user_id'],
         content=data['content'],
         date=data['date'],
+        imageurl=['imageurl']
     )
     db.session.add(new_diary)
     db.session.commit()
