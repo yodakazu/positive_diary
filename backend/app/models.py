@@ -28,7 +28,7 @@ class Diary(db.Model):
     diary_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    date = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.Date, nullable=False)
     imageurl = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
