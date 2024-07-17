@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Flask, jsonify, request, Blueprint
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from . import bcrypt, login_manager
 from .models import db, User, Diary
 
 test_bp = Blueprint('test', __name__)
@@ -9,9 +11,13 @@ def hello():
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
-# ユーザー新規登録
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# 新規登録
 @users_bp.route('/signup', methods=['POST'])
-def signup_user():
+def signup():
     data = request.json
     # フィールドの欠損をチェック
     if 'username' not in data or 'email' not in data or 'password' not in data:
@@ -24,14 +30,35 @@ def signup_user():
     existing_user_by_email = User.query.filter_by(email=data['email']).first()
     if existing_user_by_email:
         return jsonify({'message': 'Email already exists'}), 409
+    # パスワードのハッシュ化
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = User(
         username=data['username'],
         email=data['email'],
-        password=data['password']
+        password=hashed_password
     )
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'User created successfully'}), 201
+
+@users_bp.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    # フィールドの欠損をチェック
+    if 'email' not in data or 'password' not in data:
+        return jsonify({'message': 'Missing required fields'}), 400
+    # emailに基づいてユーザーを検索
+    user = User.query.filter_by(email=data['email']).first()
+    if not user or not bcrypt.check_password_hash(user.password, data['password']):
+        return jsonify({'message': 'Invalid email or password'}), 401
+    login_user(user)
+    return jsonify({'message': 'Login successful'}), 200
+
+@users_bp.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'message': 'Logout successful'}), 200
 
 # ユーザー情報取得
 @users_bp.route('/<int:user_id>', methods=['GET'])

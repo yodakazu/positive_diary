@@ -3,4 +3,6 @@ Werkzeug
 datetime
 Flask-SQLAlchemy
 Flask-Migrate
+flask_bcrypt
+flask_login
 psycopg2
