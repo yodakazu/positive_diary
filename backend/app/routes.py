@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, Blueprint
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from . import bcrypt, login_manager
 from .models import db, User, Diary
+from .auth import generate_token
 
 test_bp = Blueprint('test', __name__)
 
@@ -20,12 +21,8 @@ def load_user(user_id):
 def signup():
     data = request.json
     # フィールドの欠損をチェック
-    if 'username' not in data or 'email' not in data or 'password' not in data:
+    if 'email' not in data or 'password' not in data:
         return jsonify({'message': 'Missing required fields'}), 400
-    # usernameの競合をチェック
-    existing_user = User.query.filter_by(username=data['username']).first()
-    if existing_user:
-        return jsonify({'message': 'Username already exists'}), 409
     # emailの競合をチェック
     existing_user_by_email = User.query.filter_by(email=data['email']).first()
     if existing_user_by_email:
@@ -33,7 +30,6 @@ def signup():
     # パスワードのハッシュ化
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = User(
-        username=data['username'],
         email=data['email'],
         password=hashed_password
     )
@@ -41,6 +37,7 @@ def signup():
     db.session.commit()
     return jsonify({'message': 'User created successfully'}), 201
 
+# ログイン
 @users_bp.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -52,8 +49,14 @@ def login():
     if not user or not bcrypt.check_password_hash(user.password, data['password']):
         return jsonify({'message': 'Invalid email or password'}), 401
     login_user(user)
-    return jsonify({'message': 'Login successful'}), 200
+    token = generate_token(user.user_id)
+    return jsonify(
+        {'message': 'Login successful',
+         'userId': user.user_id,
+         'authToken': token}
+            ), 200
 
+# ログアウト
 @users_bp.route('/logout', methods=['GET'])
 def logout():
     logout_user()
@@ -105,7 +108,7 @@ diaries_bp = Blueprint('diaries', __name__, url_prefix='/diaries')
 def add_diary():
     data = request.json
     new_diary = Diary(
-        # user_id=data['user_id'],
+        user_id=data['user_id'],
         content=data['content'],
         date=data['date'],
         imageurl=['imageurl']

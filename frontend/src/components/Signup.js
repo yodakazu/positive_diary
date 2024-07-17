@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Login = () => {
     const user = { email, password };
 
     try {
-      const response = await fetch('http://localhost:8000/users/login', {
+      const response = await fetch('http://localhost:8000/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,14 +20,7 @@ const Login = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('Login successful');
-        // ログイン成功時にトークンを保存
-        localStorage.setItem('authToken', data.authToken);
-        localStorage.setItem('userId', data.userId);
-        console.log('aiueo')
-        console.log(data.authToken)
-        console.log(data.userId)
+        console.log('Signup successful');
         navigate('/');
       } else {
         console.error('Invalid email or password');
@@ -39,7 +32,7 @@ const Login = () => {
 
   return (
     <div className="container">
-      <h1 className="heading">Login</h1>
+      <h1 className="heading">Signin</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="email">Email:</label>
@@ -61,10 +54,10 @@ const Login = () => {
             required
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Signup</button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Signup;
