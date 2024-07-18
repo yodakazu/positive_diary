@@ -105,6 +105,7 @@ diaries_bp = Blueprint('diaries', __name__, url_prefix='/diaries')
 
 # 日記登録
 @diaries_bp.route('/add', methods=['POST'])
+@login_required
 def add_diary():
     data = request.json
     new_diary = Diary(

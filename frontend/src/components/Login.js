@@ -25,9 +25,6 @@ const Login = () => {
         // ログイン成功時にトークンを保存
         localStorage.setItem('authToken', data.authToken);
         localStorage.setItem('userId', data.userId);
-        console.log('aiueo')
-        console.log(data.authToken)
-        console.log(data.userId)
         navigate('/');
       } else {
         console.error('Invalid email or password');
